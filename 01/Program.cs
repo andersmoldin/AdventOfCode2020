@@ -45,8 +45,8 @@ using System.Linq;
 }
 
 // Example data and input data from https://adventofcode.com/2020/day/1
-//var expenseReport = File.ReadLines("exampleInput.txt").Select(int.Parse).ToList();
 var expenseReport = File.ReadLines("input.txt").Select(int.Parse).ToList();
+//var expenseReport = File.ReadLines("exampleInput.txt").Select(int.Parse).ToList();
 
 //Run methods to find addends of 2020
 var twoAddends = FindTwoAddends(expenseReport);
