@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoreLinq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,3 +56,21 @@ var threeAddends = FindThreeAddends(expenseReport);
 //Print results
 Console.WriteLine($"Part 1: {twoAddends.First * twoAddends.Second}");
 Console.WriteLine($"Part 2: {threeAddends.First * threeAddends.Second * threeAddends.Third}");
+
+//LINQ Part 1
+var linqPart1 = expenseReport
+.Subsets(2)
+.Where(x => x[0] + x[1] == 2020)
+.Select(x => $"{x[0]} * {x[1]} = {x[0] * x[1]}")
+.Single();
+
+//LINQ Part 2
+var linqPart2 = expenseReport
+.Subsets(3)
+.Where(x => x[0] + x[1] + x[2] == 2020)
+.Select(x => $"{x[0]} * {x[1]} * {x[2]} = {x[0] * x[1] * x[2]}")
+.Single();
+
+//Print LINQ Results
+Console.WriteLine(linqPart1);
+Console.WriteLine(linqPart2);
