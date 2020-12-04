@@ -2,50 +2,49 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
-namespace Day_4
+// Get input
+var passports = File.ReadAllText("input.txt")
+    .Split(new string[] { Environment.NewLine + Environment.NewLine }, StringSplitOptions.None) // passports
+    .Select(l => l.Split(new string[] { " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries) // passports with fields
+    .Select(s => s.Split(':')).ToDictionary(p => p[0], p => p[1])); // passports with fields as key values
+
+// Print answers
+Console.WriteLine(ValidPassportsPart1(passports).Count());
+Console.WriteLine(ValidPassportsPart2(passports).Count());
+
+// Part 1
+IEnumerable<IDictionary<string, string>> ValidPassportsPart1(IEnumerable<IDictionary<string, string>> passports)
 {
-    class Program
+    return passports.Where(x => x.Count(y => y.Key != "cid") == 7);
+}
+
+// Part 2
+IEnumerable<IDictionary<string, string>> ValidPassportsPart2(IEnumerable<IDictionary<string, string>> passports)
+{
+    var validPassportsFromPart1 = ValidPassportsPart1(passports);
+
+    return validPassportsFromPart1.Where(IsValidPassportValues);
+}
+
+bool IsValidPassportValues(IDictionary<string, string> passportValues)
+{
+    return passportValues.All(IsValidValue);
+}
+
+bool IsValidValue(KeyValuePair<string, string> field)
+{
+    return field.Key switch
     {
-        static void Main(string[] args)
-        {
-            //var input = File.ReadAllText("input.txt").Split(new string[] { "\n\n" }, StringSplitOptions.None).ToList();
-            var input = File.ReadAllText("exampleInput.txt").Split(new string[] { "\n\n" }, StringSplitOptions.None).ToList();
-
-            Console.WriteLine($"Part 1: {Part1(input)}");
-            Console.WriteLine($"Part 2: {Part2(input)}");
-        }
-
-        /// <summary>
-        /// https://adventofcode.com/2020/day/4
-        /// </summary>
-        private static int Part1(IEnumerable<string> input)
-        {
-            return input
-                .Where(p => p.Contains("byr:") &&
-                            p.Contains("iyr:") &&
-                            p.Contains("eyr:") &&
-                            p.Contains("hgt:") &&
-                            p.Contains("hcl:") &&
-                            p.Contains("ecl:") &&
-                            p.Contains("pid:"))
-                .Count();
-        }
-
-        /// <summary>
-        /// https://adventofcode.com/2020/day/4#part2
-        /// </summary>
-        private static int Part2(IEnumerable<string> input)
-        {
-            return input
-                .Where(p =>
-                {
-                    var parts = p.Split(new string[] { " ", "\n" }, StringSplitOptions.None);
-
-
-                    return true;
-                })
-                .Count();
-        }
-    }
+        "byr" => Int32.Parse(field.Value) is >= 1920 and <= 2002,
+        "iyr" => Int32.Parse(field.Value) is >= 2010 and <= 2020,
+        "eyr" => Int32.Parse(field.Value) is >= 2020 and <= 2030,
+        "hgt" => Regex.IsMatch(field.Value, "^(1([5-8][0-9]|9[0-3])cm|(59|6[0-9]|7[0-6])in)$"),
+        "hcl" => Regex.IsMatch(field.Value, "^#([0-9]|[a-f]){6}$"),
+        "ecl" => new List<string> { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" }.Contains(field.Value),
+        "pid" => field.Value.Length == 9,
+        "cid" => true,
+        _ => throw new Exception("Unknown field")
+    };
 }
