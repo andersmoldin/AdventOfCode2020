@@ -9,8 +9,8 @@ namespace Day_4
     {
         static void Main(string[] args)
         {
-            var input = File.ReadLines("input.txt").Select(int.Parse).ToList();
-            //var input = File.ReadLines("exampleInput.txt").Select(int.Parse).ToList();
+            //var input = File.ReadAllText("input.txt").Split(new string[] { "\n\n" }, StringSplitOptions.None).ToList();
+            var input = File.ReadAllText("exampleInput.txt").Split(new string[] { "\n\n" }, StringSplitOptions.None).ToList();
 
             Console.WriteLine($"Part 1: {Part1(input)}");
             Console.WriteLine($"Part 2: {Part2(input)}");
@@ -19,17 +19,33 @@ namespace Day_4
         /// <summary>
         /// https://adventofcode.com/2020/day/4
         /// </summary>
-        private static int Part1(IEnumerable<int> input)
+        private static int Part1(IEnumerable<string> input)
         {
-            return int.MinValue;
+            return input
+                .Where(p => p.Contains("byr:") &&
+                            p.Contains("iyr:") &&
+                            p.Contains("eyr:") &&
+                            p.Contains("hgt:") &&
+                            p.Contains("hcl:") &&
+                            p.Contains("ecl:") &&
+                            p.Contains("pid:"))
+                .Count();
         }
 
         /// <summary>
         /// https://adventofcode.com/2020/day/4#part2
         /// </summary>
-        private static int Part2(IEnumerable<int> input)
+        private static int Part2(IEnumerable<string> input)
         {
-            return int.MinValue;
+            return input
+                .Where(p =>
+                {
+                    var parts = p.Split(new string[] { " ", "\n" }, StringSplitOptions.None);
+
+
+                    return true;
+                })
+                .Count();
         }
     }
 }
