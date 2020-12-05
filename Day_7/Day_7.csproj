@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Day_5</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,9 +12,5 @@
     <None Update="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 </Project>
