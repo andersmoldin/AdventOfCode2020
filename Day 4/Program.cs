@@ -8,7 +8,8 @@ using System.Text.RegularExpressions;
 var passports = File.ReadAllText("input.txt")
     .Split(new string[] { Environment.NewLine + Environment.NewLine }, StringSplitOptions.None) // passports
     .Select(l => l.Split(new string[] { " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries) // passports with fields
-    .Select(s => s.Split(':')).ToDictionary(p => p[0], p => p[1])); // passports with fields as key values
+        .Select(s => s.Split(':')).ToDictionary(p => p[0], p => p[1]) // passports with fields as key values
+    );
 
 // Print answers
 Console.WriteLine(ValidPassportsPart1(passports).Count());
