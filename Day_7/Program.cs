@@ -6,27 +6,58 @@ using System.Text.RegularExpressions;
 
 //var input = File.ReadLines("input.txt");
 var input = File.ReadLines("exampleInput.txt");
+//var input = File.ReadLines("exampleInput2.txt");
 
 Console.WriteLine($"Part 1: {Part1(input)}");
-//Console.WriteLine($"Part 2: {Part2(input)}");
+Console.WriteLine($"Part 2: {Part2(input)}");
 
 int Part1(IEnumerable<string> allRules)
 {
-    var processedRules = ReadRules(allRules);
-    var newBags = 0;
+    var bags = ReadRules(allRules);
+    return NumberOfPossibleContainingBags("shiny gold", bags);
+}
+
+int Part2(IEnumerable<string> allRules)
+{
+    var bags = ReadRules2(allRules);
+    return 1;
+}
+
+Dictionary<string, string> ReadRules(IEnumerable<string> rules)
+{
+    return rules
+        .Select(s => s.Split(" bags contain "))
+        .ToDictionary(p => p[0], p => p[1]);
+}
+
+int NumberOfPossibleContainingBags(string bagToEvaluate, Dictionary<string, string> bags)
+{
+    int newBags = 0;
+    var bagsThatCanContainEvaluatedBag = new HashSet<string> { bagToEvaluate };
 
     do
     {
         newBags = 0;
 
-
+        for (int i = 0; i < bagsThatCanContainEvaluatedBag.Count; i++)
+        {
+            foreach (var bag in bags.Where(b => b.Value != "no other bags."))
+            {
+                if (bag.Value.Contains(bagsThatCanContainEvaluatedBag.ElementAt(i)) &&
+                    !bagsThatCanContainEvaluatedBag.Contains(bag.Key))
+                {
+                    bagsThatCanContainEvaluatedBag.Add(bag.Key);
+                    newBags++;
+                }
+            }
+        }        
 
     } while (newBags != 0);
 
-    return int.MinValue;
+    return bagsThatCanContainEvaluatedBag.Count(b => b != bagToEvaluate);
 }
 
-int ReadRules(IEnumerable<string> rules)
+int ReadRules2(IEnumerable<string> rules)
 {
     var bags = rules
         .Select(r => Regex.Match(r, "^([a-z ]+) bags contain ((\\d+) ([0-9a-z ]+)(,[0-9a-z ]+)*|no other bags).$").Groups)
