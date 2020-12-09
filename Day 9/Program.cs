@@ -4,38 +4,37 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-//var input = File.ReadLines("input.txt").Select(int.Parse).ToArray();
-var input = File.ReadLines("exampleInput.txt").Select(int.Parse).ToArray();
+var input = (Code: File.ReadLines("input.txt").Select(long.Parse).ToArray(), Preamble: 25);
+//var input = (Code: File.ReadLines("exampleInput.txt").Select(long.Parse).ToArray(), Preamble: 5);
 
 //Print results
-Console.WriteLine($"Part 1: {Part1(input, 5)}");
-//Console.WriteLine($"Part 2: {Part2(input)}");
+Console.WriteLine($"Part 1: {Part1(input.Code, input.Preamble)}");
+Console.WriteLine($"Part 2: {Part2(input.Code, Part1(input.Code, input.Preamble))}");
 
 
-int Part1(int[] xmasCode, int preamble)
+long Part1(long[] xmasCode, int preamble = 25)
 {
-	int? notSumOfAnyPreviousInPreamble = null;
+	long? notSumOfAnyPreviousInPreamble = null;
 
-	var validValues = new HashSet<int>();
-
-	for (int currentValue = preamble; currentValue < xmasCode.Length/* - preamble*/; currentValue++)
+	for (int currentValue = preamble; currentValue < xmasCode.Length; currentValue++)
 	{
-		for (int firstAddend = currentValue - preamble; firstAddend < preamble; firstAddend++)
+		for (int firstAddend = currentValue - preamble; firstAddend < currentValue; firstAddend++)
 		{
             if (notSumOfAnyPreviousInPreamble.HasValue)
             {
 				continue;
             }
 
-            for (int secondAddend = firstAddend + 1; secondAddend < preamble; secondAddend++)
+            for (int secondAddend = firstAddend + 1; secondAddend < currentValue; secondAddend++)
             {
+				if (notSumOfAnyPreviousInPreamble.HasValue)
+				{
+					continue;
+				}
+
 				if (xmasCode[firstAddend] + xmasCode[secondAddend] == xmasCode[currentValue])
                 {
 					notSumOfAnyPreviousInPreamble = xmasCode[currentValue];
-
-					validValues.Add(xmasCode[currentValue]);
-
-					continue;
                 }
             }
 		}
@@ -48,8 +47,27 @@ int Part1(int[] xmasCode, int preamble)
 		notSumOfAnyPreviousInPreamble = null;
 	}
 
-	var hej1 = validValues.Except(xmasCode).ToList();
-	var hej2 = xmasCode.Except(validValues).ToList();
+	throw new Exception("Could not find weakness in XMAS code.");
+}
 
-	return int.MinValue;
+long Part2(long[] xmasCode, long invalidNumber)
+{
+    for (int i = 0; i < xmasCode.Length; i++)
+    {
+		var j = i + 1;
+		var contiguousSet = new List<long> { xmasCode[i], xmasCode[i + 1] };
+
+		while (contiguousSet.Sum() <= invalidNumber)
+        {
+            if (contiguousSet.Sum() == invalidNumber)
+            {
+				return contiguousSet.Min() + contiguousSet.Max();
+            }
+
+			j++;
+			contiguousSet.Add(xmasCode[j]);
+		}
+	}
+
+	return long.MinValue;
 }
