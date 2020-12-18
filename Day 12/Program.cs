@@ -1,61 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-//var input = File.ReadLines("input.txt").ToArray();
-var input = File.ReadLines("exampleInput.txt").ToArray();
+//var input = File.ReadLines("input.txt").Select(l => (Action: l.Substring(0, 1), Value: Convert.ToInt32(l.Substring(1)))).ToArray();
+var input = File.ReadLines("exampleInput.txt").Select(l => (Action: l.Substring(0, 1), Value: Convert.ToInt32(l.Substring(1)))).ToArray();
 
 // Print answers
+Console.WriteLine((int)Direction.North + 1);
 Console.WriteLine(Part1(input));
 Console.WriteLine(Part2(input));
 
 // Part 1
-int Part1(string[] sequence)
+int Part1((string Action, int Value)[] sequence)
 {
-    var positionAndDirection = (X: 0, Y: 0, Direction: 'E');
+    var currentPositionAndDirection = (X: 0, Y: 0, Direction: Direction.East);
 
     foreach (var actionAndValue in sequence)
     {
-        positionAndDirection = Move(positionAndDirection, actionAndValue);
+        currentPositionAndDirection = Move(currentPositionAndDirection, actionAndValue);
     }
 
     return int.MinValue;
 }
 
 // Part 2
-int Part2(string[] sequence)
+int Part2((string Action, int Value)[] sequence)
 {
     return int.MinValue;
 }
 
-(int X, int Y, char Direction) Move((int X, int Y, char Direction) currentState, string actionAndValue)
+(int X, int Y, Direction Direction) Move((int X, int Y, Direction Direction) currentState, (string Action, int Value) actionAndValue)
 {
-    var action = actionAndValue.Substring(0, 1);
-
-    switch (action)
+    switch (actionAndValue.Action)
     {
         case "F":
 
             break;
         case "L":
         case "R":
-            currentState.Direction = Turn(currentState, action);
+            currentState.Direction = Turn(currentState, actionAndValue);
             break;
         
     }
 
-    return (0, 0, 'E');
+    return (0, 0, Direction.East);
 }
 
-char Turn((int X, int Y, char Direction) currentState, string action)
+Direction Turn((int X, int Y, Direction Direction) currentState, (string Action, int Value) actionAndValue)
 {
-    // Need to mod 90 on value to know how far to turn
-    return currentState.Direction switch
-    {
-        'E' => action == "L" ? 'N' : 'S',
-        'S' => action == "L" ? 'E' : 'W',
+    var nitti = actionAndValue.Value / 90;
+    var fyra = nitti % 4;
+    var hej = actionAndValue.Action == "L" ? (actionAndValue.Value / 90 % 4 - currentState.Direction) : (actionAndValue.Value / 90 % 4 + currentState.Direction);
 
-    };
+    return hej;
 }
 
+enum Direction
+{
+    North,
+    East,
+    South,
+    West
+}
